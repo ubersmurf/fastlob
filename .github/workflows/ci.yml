@@ -1,0 +1,13 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build:
+    runs_on: ubuntu-latest
+    strategy:
+      matrix:
+        sanitize: ["OFF", "ON"]
+      steps:
+        - uses: actions/checkout@v4
+        - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DFASTLOB_SANITIZE=${{ matrix.sanitize }}
+        - run: cmake --build build
+        - run: cmake --test-dir build --output-on-failure
